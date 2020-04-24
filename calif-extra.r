@@ -64,6 +64,7 @@ print(promses[promses['r'] == max(promses['r']), c(1,5,6,7)])
 
 #sna <- sum(apply(f_val, 2, anyNA))
 #t.ses <- length(f_val) - sna
+# total de sesiones
 z <- sapply(s_val, function(y) sum(length(which(is.na(y))))) != nrow(s_val)
 t.ses <- table(z)["TRUE"]
 cat("\nTotal de sesiones: ", t.ses)
