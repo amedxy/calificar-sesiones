@@ -38,9 +38,19 @@ ret <- rowSums(f_val == 'r', na.rm = TRUE)
 fal <- rowSums(f_val == 'f', na.rm = TRUE)
 ret_mas_fal <- fal + floor(ret/3)
 
-promses <- data.frame(nom, ret, fal ,ret_mas_fal, p, pa, r)
+#sna <- sum(apply(f_val, 2, anyNA))
+#t.ses <- length(f_val) - sna
+# total de sesiones
+# z <- sapply(s_val, function(y) sum(length(which(is.na(y))))) != nrow(s_val)
+# t.ses <- table(z)["TRUE"]
+# cat("\nTotal de sesiones: ", t.ses)
+t.ses <- apply(s_val, 1, function(x) length(which(!is.na(x))))
+#cat("\nFaltas permitidas:", fp <- 0.2*t.ses,"\n")
+fp <- 0.2 * t.ses
+
+promses <- data.frame(nom, ret, fal ,ret_mas_fal, p, ppx, pa, r, t.ses, fp)
 sesprom <- data.frame(sest, p, ppx, pa, r)
-falprom <- data.frame(falt, ret, fal, ret_mas_fal)
+falprom <- data.frame(falt, ret, fal, ret_mas_fal, t.ses, fp)
 extraprom <- data.frame(xtrat, pextra, ppx)
 
 cat("Sesiones","\n")
@@ -52,6 +62,8 @@ cat("\fFaltas y Retardos","\n")
 print(falprom)
 cat("\nr son los retardos y f las faltas. Tres retardos equivalen a una falta.")
 cat('\nret_mas_fal es la suma de retardos y faltas')
+cat('\nt.ses es el número total de sesiones del alumno')
+cat('\nfp son las faltas permitidas, si el estudiante pasa ese número estará en E.P.F.')
 
 cat("\fCalificación Extra","\n")
 print(extraprom)
@@ -60,22 +72,14 @@ cat("\nSe pudo obtener hasta ",puntos_extra," puntos extra")
 
 cat("\fResumen\n")
 cat("\n\nCalificación máxima: \n")
-print(promses[promses['r'] == max(promses['r']), c(1,5,6,7)])
+print(promses[promses['r'] == max(promses['r']), c(1,5,6,7,8)])
 
-#sna <- sum(apply(f_val, 2, anyNA))
-#t.ses <- length(f_val) - sna
-# total de sesiones
-z <- sapply(s_val, function(y) sum(length(which(is.na(y))))) != nrow(s_val)
-t.ses <- table(z)["TRUE"]
-cat("\nTotal de sesiones: ", t.ses)
-
-cat("\nFaltas permitidas:", fp <- 0.2*t.ses,"\n")
-
-cat('\nAlumnos en E.P.F.: ', tepf <- sum(promses['ret_mas_fal'] > fp), '\n')
-print(promses[promses['ret_mas_fal'] > fp, c('alumno', 'p','pa', 'r', 'ret', 'fal','ret_mas_fal')])
+cat('\nAlumnos en E.P.F.: ', tepf <- sum(promses['ret_mas_fal'] > promses['fp']), '\n')
+print(promses[promses['ret_mas_fal'] > fp, c('alumno', 'p','pa', 'ppx', 'r', 'ret', 'fal','ret_mas_fal', 't.ses', 'fp')])
 
 cat('\nAlumnos en E.P.P.: ', tepp <- sum(promses['r'] < 6 & promses['ret_mas_fal'] <= fp), '\n')
-print(promses[promses['r'] < 6 & promses['ret_mas_fal'] <= fp, c('alumno', 'p','pa', 'r')])
+print(promses[promses['r'] < 6 & promses['ret_mas_fal'] <= fp, c('alumno', 'p', 'ppx','pa', 'r')])
+print(r)
 cat("\nPromedio del grupo: ", round(mean(r),2))
 cat("\nPorcentaje de alumnos aprobados: ", round(((nrow(nom)-tepf-tepp)/nrow(nom))*100,2), "%")
 
