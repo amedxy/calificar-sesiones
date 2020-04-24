@@ -79,7 +79,7 @@ print(promses[promses['ret_mas_fal'] > fp, c('alumno', 'p','pa', 'ppx', 'r', 're
 
 cat('\nAlumnos en E.P.P.: ', tepp <- sum(promses['r'] < 6 & promses['ret_mas_fal'] <= fp), '\n')
 print(promses[promses['r'] < 6 & promses['ret_mas_fal'] <= fp, c('alumno', 'p', 'ppx','pa', 'r')])
-print(r)
+# print(r)
 cat("\nPromedio del grupo: ", round(mean(r),2))
 cat("\nPorcentaje de alumnos aprobados: ", round(((nrow(nom)-tepf-tepp)/nrow(nom))*100,2), "%")
 
